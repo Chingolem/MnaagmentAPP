@@ -45,6 +45,7 @@
         </div>
         <div id="login-error-msg" class="login-error"></div>
         <button type="submit" id="login-submit-btn" class="btn-login">Sign In</button>
+        <button type="button" id="btn-login-offline" class="btn-login" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); margin-top: 10px; color: var(--text-2);">Use Offline Mode</button>
       </form>
     </div>
   </div>
@@ -192,6 +193,19 @@
             </div>
           </div>
 
+          <!-- CREATION CARD -->
+          <div class="glass-card classifier-card dash-span-2" id="creation-card" style="display: none; margin-bottom: 15px;">
+            <div class="classifier-header">
+              <span class="card-label" id="creation-title" style="color: var(--blue);">Add New Project</span>
+              <button class="classifier-close" id="creation-close">&times;</button>
+            </div>
+            <p class="classifier-text" id="creation-desc">Enter the name for the new project:</p>
+            <div style="display: flex; gap: 10px; margin-top: 10px; align-items: center; width: 100%;">
+              <input type="text" id="creation-input" placeholder="Name..." style="flex: 1; padding: 10px 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: var(--text-1); font-family: inherit; font-size: 14px; outline: none;">
+              <button id="btn-creation-submit" style="background: var(--blue); color: white; border: none; padding: 10px 18px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 14px; transition: background 0.2s;">Create</button>
+            </div>
+          </div>
+
           <!-- TIMER CONTROLLER CARD -->
           <div class="glass-card timer-card dash-span-2">
             <div class="timer-header">
@@ -199,13 +213,19 @@
             </div>
             <div class="timer-selectors">
               <div class="selector-item">
-                <label class="selector-label">Project</label>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                  <label class="selector-label" style="margin-bottom: 0;">Project</label>
+                  <button id="btn-add-project" style="background: none; border: none; color: var(--blue); font-size: 11px; font-weight: 600; cursor: pointer; padding: 0;">+ Add</button>
+                </div>
                 <select id="project-selector" class="selector-field">
                   <option value="">No Project Selected</option>
                 </select>
               </div>
               <div class="selector-item">
-                <label class="selector-label">Task</label>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                  <label class="selector-label" style="margin-bottom: 0;">Task</label>
+                  <button id="btn-add-task" style="background: none; border: none; color: var(--blue); font-size: 11px; font-weight: 600; cursor: pointer; padding: 0;" disabled>+ Add</button>
+                </div>
                 <select id="task-selector" class="selector-field" disabled>
                   <option value="">No Task Selected</option>
                 </select>

@@ -2005,16 +2005,36 @@ function cleanProcessName(proc) {
     'idea64': 'intellij idea',
     'excel': 'microsoft excel',
     'winword': 'microsoft word',
-    'powerpnt': 'microsoft powerpoint'
+    'powerpnt': 'microsoft powerpoint',
+    'robloxplayerbeta': 'roblox',
+    'robloxplayer': 'roblox',
+    'spotify': 'spotify music',
+    'discord': 'discord chat'
   };
   
   if (mappings[cleaned]) {
     return mappings[cleaned];
   }
   
+  // Clean characters
   cleaned = cleaned.replace(/[-_]+/g, ' ');
   cleaned = cleaned.replace(/([a-z])([A-Z])/g, '$1 $2');
-  return cleaned;
+  
+  // Strip common executable suffix phrases (so robloxplayerbeta -> roblox)
+  const suffixes = [
+    'playerbeta', 'player', 'launcher', 'client', 'setup', 'win64', 'win32', 
+    'x64', 'x86', 'desktop', 'app', 'agent', 'service', 'host', 'helper', 
+    'manager', 'utility', 'ui', 'core', 'canary', 'ptb'
+  ];
+  
+  suffixes.forEach(suffix => {
+    const regex = new RegExp(`\\b${suffix}\\b|${suffix}$`, 'i');
+    cleaned = cleaned.replace(regex, '');
+  });
+  
+  cleaned = cleaned.trim().replace(/\s+/g, ' ');
+  
+  return cleaned || proc.replace(/\.exe$/i, '');
 }
 
 function performWikipediaSearch(query) {

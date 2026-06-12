@@ -220,6 +220,17 @@ loginForm.addEventListener('submit', async (e) => {
   }
 });
 
+const btnLoginOffline = $('btn-login-offline');
+if (btnLoginOffline) {
+  btnLoginOffline.addEventListener('click', () => {
+    appLog('Entering offline mode');
+    onUserAuthenticated({
+      email: 'offline@timeroi.local',
+      id: 'offline_user'
+    });
+  });
+}
+
 logoutBtn.addEventListener('click', async () => {
   if (isLocalTracking) {
     alert('Please stop the active timer before signing out.');
@@ -241,7 +252,37 @@ logoutBtn.addEventListener('click', async () => {
 // ═══════════════════════════════════════════
 
 async function loadWorkspaceData() {
+  // Load local cache immediately so the UI is responsive and works offline
+  const localClients = localStorage.getItem('workspace_clients');
+  if (localClients) {
+    try {
+      clientsList = JSON.parse(localClients) || [];
+      populateProjectSelector();
+      if (selectedClientId) {
+        const btnAddTsk = $('btn-add-task');
+        if (btnAddTsk) btnAddTsk.removeAttribute('disabled');
+      }
+    } catch (e) {
+      console.error('Error parsing local clients cache:', e);
+    }
+  }
+
+  const localWorkspace = localStorage.getItem('workspace_data');
+  if (localWorkspace) {
+    try {
+      currentWorkspace = JSON.parse(localWorkspace);
+    } catch (e) {}
+  }
+
   if (!currentUser) return;
+  
+  // If user is offline mock user, skip cloud syncing
+  if (currentUser.email === 'offline@timeroi.local') {
+    syncStatusBadge.textContent = 'Offline Mode';
+    syncStatusBadge.style.color = 'var(--text-3)';
+    return;
+  }
+
   syncStatusBadge.textContent = 'Syncing...';
   syncStatusBadge.style.color = 'var(--yellow)';
 
@@ -263,7 +304,13 @@ async function loadWorkspaceData() {
     } else if (data) {
       currentWorkspace = data;
       clientsList = data.clients || [];
+      localStorage.setItem('workspace_clients', JSON.stringify(clientsList));
+      localStorage.setItem('workspace_data', JSON.stringify(currentWorkspace));
       populateProjectSelector();
+      if (selectedClientId) {
+        const btnAddTsk = $('btn-add-task');
+        if (btnAddTsk) btnAddTsk.removeAttribute('disabled');
+      }
       syncStatusBadge.textContent = 'Cloud Active';
       syncStatusBadge.style.color = 'var(--green)';
       appLog('Workspace synced from cloud');
@@ -290,6 +337,8 @@ async function createInitialWorkspace() {
   } else {
     currentWorkspace = initialData;
     clientsList = [];
+    localStorage.setItem('workspace_clients', JSON.stringify(clientsList));
+    localStorage.setItem('workspace_data', JSON.stringify(currentWorkspace));
     populateProjectSelector();
     syncStatusBadge.textContent = 'Cloud Active';
     syncStatusBadge.style.color = 'var(--green)';
@@ -557,7 +606,24 @@ setInterval(() => {
 // ═══════════════════════════════════════════
 
 async function saveWorkspaceToSupabase(isAutosave = false) {
-  if (!currentUser || !currentWorkspace) return;
+  // Always update local storage first so offline changes are preserved
+  localStorage.setItem('workspace_clients', JSON.stringify(clientsList));
+  if (currentWorkspace) {
+    currentWorkspace.clients = clientsList;
+    localStorage.setItem('workspace_data', JSON.stringify(currentWorkspace));
+  }
+  updateAnalyticsUI();
+
+  if (!currentUser) return;
+
+  // If user is offline mock user, skip cloud syncing
+  if (currentUser.email === 'offline@timeroi.local') {
+    syncStatusBadge.textContent = 'Offline Mode';
+    syncStatusBadge.style.color = 'var(--text-3)';
+    return;
+  }
+
+  if (!currentWorkspace) return;
 
   syncStatusBadge.textContent = 'Saving...';
   syncStatusBadge.style.color = 'var(--yellow)';
@@ -1139,7 +1205,41 @@ function formatAnalyticsDuration(seconds) {
 
 function updateAnalyticsUI() {
   if (!clientsList || clientsList.length === 0) {
-    $('analytics-table-body').innerHTML = '<tr><td colspan="6" class="table-empty">No project data available.</td></tr>';
+    const tbody = $('analytics-table-body');
+    if (tbody) tbody.innerHTML = '<tr><td colspan="6" class="table-empty">No project data available.</td></tr>';
+    
+    // Reset KPIs
+    if ($('stat-completed')) $('stat-completed').textContent = '0/0';
+    if ($('stat-efficiency')) $('stat-efficiency').textContent = '0% delivery';
+    if ($('stat-work-time')) $('stat-work-time').textContent = '0m';
+    if ($('stat-avg-time')) $('stat-avg-time').textContent = '~0m avg';
+    if ($('stat-idle-time')) $('stat-idle-time').textContent = '0m';
+    if ($('stat-idle-percentage')) $('stat-idle-percentage').textContent = '0% of total';
+    if ($('stat-gaming-time')) $('stat-gaming-time').textContent = '0m';
+    if ($('stat-gaming-percentage')) $('stat-gaming-percentage').textContent = '0% of total';
+    
+    // Reset charts
+    const circ = 251.2;
+    setRingSegment('donut-segment-working', 0, circ, 0);
+    setRingSegment('donut-segment-gaming', 0, circ, 0);
+    setRingSegment('donut-segment-entertainment', 0, circ, 0);
+    setRingSegment('donut-segment-idle', 0, circ, 0);
+    if ($('chart-center-value')) $('chart-center-value').textContent = '0m';
+    
+    // Reset process bars
+    const barsContainer = $('process-bars-container');
+    if (barsContainer) barsContainer.innerHTML = '<p class="table-empty">No focus data recorded yet.</p>';
+    
+    // Reset weekly chart
+    const daysOfWeek = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+    daysOfWeek.forEach(d => {
+      const workBar = $(`bar-${d}-work`);
+      const gameBar = $(`bar-${d}-gaming`);
+      const entBar = $(`bar-${d}-entertainment`);
+      if (workBar) workBar.style.height = '0%';
+      if (gameBar) gameBar.style.height = '0%';
+      if (entBar) entBar.style.height = '0%';
+    });
     return;
   }
 
@@ -1627,3 +1727,128 @@ ipcRenderer.on('focus-classifier-card', (event, { process }) => {
     }
   }
 });
+
+// ═══════════════════════════════════════════
+// PROJECT & TASK CREATION HANDLERS
+// ═══════════════════════════════════════════
+
+let creationMode = 'project'; // 'project' or 'task'
+
+const creationCard = $('creation-card');
+const creationTitle = $('creation-title');
+const creationDesc = $('creation-desc');
+const creationInput = $('creation-input');
+const btnCreationSubmit = $('btn-creation-submit');
+const creationClose = $('creation-close');
+const btnAddProject = $('btn-add-project');
+const btnAddTask = $('btn-add-task');
+
+if (btnAddProject) {
+  btnAddProject.addEventListener('click', () => {
+    creationMode = 'project';
+    if (creationTitle) creationTitle.textContent = 'Add New Project';
+    if (creationDesc) creationDesc.textContent = 'Enter the name for the new project:';
+    if (creationInput) {
+      creationInput.value = '';
+      creationInput.placeholder = 'Project name...';
+    }
+    if (creationCard) {
+      creationCard.style.display = 'block';
+      creationCard.scrollIntoView({ behavior: 'smooth' });
+      creationInput.focus();
+    }
+  });
+}
+
+if (btnAddTask) {
+  btnAddTask.addEventListener('click', () => {
+    if (!selectedClientId) {
+      alert('Please select a project first.');
+      return;
+    }
+    creationMode = 'task';
+    if (creationTitle) creationTitle.textContent = 'Add New Task';
+    if (creationDesc) creationDesc.textContent = 'Enter the name for the new task:';
+    if (creationInput) {
+      creationInput.value = '';
+      creationInput.placeholder = 'Task name...';
+    }
+    if (creationCard) {
+      creationCard.style.display = 'block';
+      creationCard.scrollIntoView({ behavior: 'smooth' });
+      creationInput.focus();
+    }
+  });
+}
+
+if (creationClose) {
+  creationClose.addEventListener('click', () => {
+    if (creationCard) creationCard.style.display = 'none';
+  });
+}
+
+function submitCreation() {
+  if (!creationInput) return;
+  const val = creationInput.value.trim();
+  if (!val) return;
+
+  if (creationMode === 'project') {
+    const newProject = {
+      id: 'client_' + Date.now(),
+      name: val,
+      role: 'general',
+      createdAt: Date.now(),
+      videos: []
+    };
+    clientsList.push(newProject);
+    selectedClientId = newProject.id;
+    populateProjectSelector();
+    projectSelector.value = selectedClientId;
+    if (btnAddTask) btnAddTask.removeAttribute('disabled');
+    populateTaskSelector();
+    saveWorkspaceToSupabase();
+    appLog(`Created new project: "${val}"`);
+  } else if (creationMode === 'task') {
+    const client = clientsList.find(c => c.id === selectedClientId);
+    if (!client) return;
+    
+    const newTask = {
+      id: Date.now(),
+      status: 'not_started',
+      totalSeconds: 0,
+      lastStartTime: null,
+      price: 0,
+      note: val,
+      sourceLink: '',
+      finalLink: '',
+      deadline: '',
+      checklist: [],
+      showOnCanvas: true,
+      videoLength: '',
+      idleGaps: [],
+      processDurations: { 'Creative Work': 0, 'Gaming': 0, 'Entertainment': 0, 'Discord': 0, 'Web Work': 0, 'Other': 0 }
+    };
+    if (!client.videos) client.videos = [];
+    client.videos.push(newTask);
+    selectedVideoId = newTask.id.toString();
+    populateTaskSelector();
+    taskSelector.value = selectedVideoId;
+    saveWorkspaceToSupabase();
+    appLog(`Created new task: "${val}"`);
+  }
+
+  if (creationCard) creationCard.style.display = 'none';
+  updateAnalyticsUI();
+}
+
+if (btnCreationSubmit) {
+  btnCreationSubmit.addEventListener('click', submitCreation);
+}
+
+if (creationInput) {
+  creationInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      submitCreation();
+    }
+  });
+}
