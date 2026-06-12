@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>TIMEROI Overlay</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+    :root {
+      --blue: #007AFF;
+      --green: #30D158;
+      --red: #FF375F;
+      --yellow: #FFD60A;
+      --purple: #BF5AF2;
+      --bg: rgba(28, 28, 30, 0.85);
+      --border: rgba(255, 255, 255, 0.08);
+      --text-1: rgba(255, 255, 255, 0.92);
+      --text-2: rgba(255, 255, 255, 0.55);
+      --text-3: rgba(255, 255, 255, 0.30);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; font-family: 'Inter', -apple-system, sans-serif; }
+
+    body {
+      background: transparent;
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .overlay-card {
+      width: 380px;
+      background: var(--bg);
+      backdrop-filter: blur(40px) saturate(180%);
+      -webkit-backdrop-filter: blur(40px) saturate(180%);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 16px 18px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.6), 0 0 30px rgba(0,122,255,0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transform: translateY(-180px);
+      opacity: 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .overlay-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 15%;
+      right: 15%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(0,122,255,0.3), transparent);
+    }
+
+    .slide-in { animation: slideDown 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+    .slide-out { animation: slideUp 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+
+    @keyframes slideDown {
+      from { transform: translateY(-180px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(0); opacity: 1; }
+      to { transform: translateY(-180px); opacity: 0; }
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .info-group { display: flex; flex-direction: column; gap: 2px; }
+
+    .title {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--text-1);
+      letter-spacing: -0.3px;
+    }
+
+    .subtitle {
+      font-size: 0.72rem;
+      color: var(--text-2);
+      font-weight: 500;
+    }
+
+    .app-badge {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      padding: 3px 10px;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      color: var(--blue);
+      font-weight: 700;
+      max-width: 180px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .action-row {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 6px;
+    }
+
+    .action-btn {
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.02);
+      border-radius: 10px;
+      padding: 7px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      cursor: pointer;
+      font-size: 0.7rem;
+      font-weight: 700;
+      font-family: inherit;
+      color: var(--text-1);
+      transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .action-btn:hover { transform: translateY(-1px); }
+
+    .action-btn.work:hover { background: var(--green); border-color: var(--green); color: #fff; box-shadow: 0 6px 16px rgba(48,209,88,0.3); }
+    .action-btn.gaming:hover { background: var(--red); border-color: var(--red); color: #fff; box-shadow: 0 6px 16px rgba(255,55,95,0.3); }
+    .action-btn.entertainment:hover { background: var(--purple); border-color: var(--purple); color: #fff; box-shadow: 0 6px 16px rgba(191,90,242,0.3); }
+    .action-btn.ai:hover { background: var(--blue); border-color: var(--blue); color: #fff; box-shadow: 0 6px 16px rgba(0,122,255,0.3); }
+    .action-btn.ignore:hover { background: rgba(255,255,255,0.08); }
+
+    .dismiss-x {
+      background: transparent;
+      border: none;
+      color: var(--text-3);
+      font-size: 1rem;
+      cursor: pointer;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .dismiss-x:hover { color: var(--text-1); background: rgba(255,255,255,0.08); }
+
+    .ai-feedback {
+      position: absolute;
+      inset: 0;
+      background: rgba(28,28,30,0.96);
+      border-radius: 20px;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 20px;
+      text-align: center;
+      z-index: 10;
+    }
+
+    .ai-feedback.active { display: flex; }
+
+    .ai-icon {
+      font-size: 2rem;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 0.8; }
+      50% { transform: scale(1.1); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="overlay-card" id="dialog-card">
+    <div class="header">
+      <div class="info-group">
+        <span class="title">New Application</span>
+        <span class="subtitle">Assign tracking behavior:</span>
+      </div>
+      <button class="dismiss-x" id="btn-dismiss">✕</button>
+    </div>
+
+    <div style="display:flex;align-items:center;justify-content:space-between;">
+      <span class="subtitle" style="font-weight:700;color:var(--text-1)">Process:</span>
+      <div class="app-badge" id="app-badge">unknown</div>
+    </div>
+
+    <div class="action-row">
+      <button class="action-btn work" id="btn-work">💼<span>Work</span></button>
+      <button class="action-btn gaming" id="btn-fun">🎮<span>Gaming</span></button>
+      <button class="action-btn entertainment" id="btn-ent">🎬<span>Media</span></button>
+      <button class="action-btn ai" id="btn-ai">🤖<span>AI</span></button>
+      <button class="action-btn ignore" id="btn-ignore">🚫<span>Never Ask</span></button>
+    </div>
+
+    <div class="ai-feedback" id="ai-feedback">
+      <div class="ai-icon">🤖</div>
+      <div id="ai-feedback-text" style="color:var(--text-1);font-size:0.88rem;font-weight:800;line-height:1.4;">Evaluating...</div>
+    </div>
+  </div>
+
+  <script>
+    const { ipcRenderer } = require('electron');
+
+    const dialogCard = document.getElementById('dialog-card');
+    const appBadge = document.getElementById('app-badge');
+    const aiFeedback = document.getElementById('ai-feedback');
+    const aiFeedbackText = document.getElementById('ai-feedback-text');
+
+    let currentProcess = null;
+
+    ipcRenderer.on('active-window-update', (event, data) => {
+      if (currentProcess !== data.process) {
+        currentProcess = data.process;
+        appBadge.textContent = data.process;
+
+        dialogCard.classList.remove('slide-in', 'slide-out');
+        void dialogCard.offsetWidth;
+        dialogCard.classList.add('slide-in');
+        aiFeedback.classList.remove('active');
+      }
+    });
+
+    function setClassification(type) {
+      if (!currentProcess) return;
+
+      if (type === 'ai') {
+        aiFeedback.classList.add('active');
+        aiFeedbackText.textContent = `Evaluating ${currentProcess}...`;
+        ipcRenderer.send('ai-classify-request', currentProcess);
+        return;
+      }
+
+      dialogCard.classList.remove('slide-in');
+      dialogCard.classList.add('slide-out');
+      ipcRenderer.send('classify-process-response', { process: currentProcess, classification: type });
+      setTimeout(() => ipcRenderer.send('hide-overlay'), 350);
+    }
+
+    ipcRenderer.on('ai-classify-response', (event, { process, classification, reason, why }) => {
+      if (process === currentProcess) {
+        const label = classification === 'work' ? '💼 Work' : (classification === 'gaming' ? '🎮 Gaming' : (classification === 'entertainment' ? '🎬 Media' : '🚫 Ignored'));
+        let html = `Classified as:<br><strong style="color:var(--blue);font-size:1rem;">${label}</strong>`;
+        if (reason) html += `<br><span style="font-size:0.68rem;color:var(--text-2);font-weight:400;margin-top:4px;display:block;padding:0 8px;">${reason}</span>`;
+        if (why) html += `<br><span style="font-size:0.62rem;color:var(--purple);font-weight:600;margin-top:3px;display:block;padding:0 8px;">Why: ${why}</span>`;
+        aiFeedbackText.innerHTML = html;
+
+        setTimeout(() => {
+          dialogCard.classList.remove('slide-in');
+          dialogCard.classList.add('slide-out');
+          setTimeout(() => ipcRenderer.send('hide-overlay'), 350);
+        }, 2000);
+      }
+    });
+
+    function dismissOverlay() {
+      dialogCard.classList.remove('slide-in');
+      dialogCard.classList.add('slide-out');
+      setTimeout(() => ipcRenderer.send('hide-overlay'), 350);
+    }
+
+    document.getElementById('btn-work').addEventListener('click', () => setClassification('work'));
+    document.getElementById('btn-fun').addEventListener('click', () => setClassification('gaming'));
+    document.getElementById('btn-ent').addEventListener('click', () => setClassification('entertainment'));
+    document.getElementById('btn-ai').addEventListener('click', () => setClassification('ai'));
+    document.getElementById('btn-ignore').addEventListener('click', () => setClassification('ignore'));
+    document.getElementById('btn-dismiss').addEventListener('click', dismissOverlay);
+  </script>
+</body>
+</html>

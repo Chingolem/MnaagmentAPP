@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TIMEROI</title>
+  <link rel="stylesheet" href="index.css">
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- LOGIN VIEW -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div id="login-screen" class="login-view">
+    <div class="login-backdrop">
+      <div class="login-orb login-orb-1"></div>
+      <div class="login-orb login-orb-2"></div>
+      <div class="login-orb login-orb-3"></div>
+    </div>
+    <div class="login-card">
+      <div class="login-brand">
+        <div class="login-logo">
+          <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+            <circle cx="20" cy="20" r="18" stroke="url(#loginGrad)" stroke-width="2.5" fill="none"/>
+            <path d="M20 10 L20 22 L28 26" stroke="url(#loginGrad)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <defs>
+              <linearGradient id="loginGrad" x1="0" y1="0" x2="40" y2="40">
+                <stop offset="0%" stop-color="#007AFF"/>
+                <stop offset="100%" stop-color="#AF52DE"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <h1 class="login-title">TIMEROI</h1>
+        <p class="login-subtitle">Intelligent time tracking companion</p>
+      </div>
+      <form id="login-form" class="login-form">
+        <div class="input-group">
+          <label class="input-label">Email</label>
+          <input type="email" id="login-email" class="input-field" required placeholder="name@example.com" autocomplete="email">
+        </div>
+        <div class="input-group">
+          <label class="input-label">Password</label>
+          <input type="password" id="login-password" class="input-field" required placeholder="••••••••" autocomplete="current-password">
+        </div>
+        <div id="login-error-msg" class="login-error"></div>
+        <button type="submit" id="login-submit-btn" class="btn-login">Sign In</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- MAIN APPLICATION -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div id="app-screen" class="app-shell" style="display: none;">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <svg width="28" height="28" viewBox="0 0 40 40" fill="none">
+          <circle cx="20" cy="20" r="18" stroke="url(#sideGrad)" stroke-width="2.5" fill="none"/>
+          <path d="M20 10 L20 22 L28 26" stroke="url(#sideGrad)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <defs>
+            <linearGradient id="sideGrad" x1="0" y1="0" x2="40" y2="40">
+              <stop offset="0%" stop-color="#007AFF"/>
+              <stop offset="100%" stop-color="#BF5AF2"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <span class="sidebar-brand-name">TIMEROI</span>
+      </div>
+
+      <nav class="sidebar-nav">
+        <button class="nav-item active" data-tab="dashboard">
+          <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+          <span>Dashboard</span>
+        </button>
+        <button class="nav-item" data-tab="analytics">
+          <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+          <span>Analytics</span>
+        </button>
+        <button class="nav-item" data-tab="settings">
+          <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          <span>Settings</span>
+        </button>
+        <button class="nav-item" data-tab="logs">
+          <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          <span>Activity</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <div class="user-avatar" id="user-avatar-lbl">U</div>
+          <div class="user-info">
+            <span class="user-name" id="user-email-lbl">user@example.com</span>
+            <button class="user-logout" id="logout-btn">Sign Out</button>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-area">
+
+      <!-- TITLEBAR DRAG AREA -->
+      <div class="titlebar">
+        <div class="titlebar-drag"></div>
+        <div class="titlebar-actions">
+          <button class="titlebar-btn" id="sync-btn" title="Force Sync">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>
+            <span id="sync-status-badge">Cloud Active</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════════ -->
+      <!-- TAB: DASHBOARD -->
+      <!-- ═══════════════════════════════════════════ -->
+      <section class="tab-panel active" id="tab-dashboard">
+        <div class="dash-grid">
+
+          <!-- STATE HERO CARD -->
+          <div class="glass-card state-hero" id="state-card-container">
+            <div class="state-hero-bg" id="state-glow"></div>
+            <div class="state-hero-content">
+              <div class="state-badge" id="state-badge-indicator">
+                <span class="state-dot"></span>
+                <span id="state-title">Waiting</span>
+              </div>
+              <p class="state-subtitle" id="state-desc">Monitoring active windows</p>
+              <div class="state-meta">
+                <div class="state-meta-item">
+                  <span class="meta-label">Confidence</span>
+                  <span class="meta-value" id="state-confidence">—</span>
+                </div>
+                <div class="state-meta-item">
+                  <span class="meta-label">Focus Streak</span>
+                  <span class="meta-value" id="state-streak">0m</span>
+                </div>
+                <div class="state-meta-item">
+                  <span class="meta-label">Source</span>
+                  <span class="meta-value" id="state-source">—</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ACTIVE APP CARD -->
+          <div class="glass-card focus-card">
+            <div class="focus-header">
+              <span class="card-label">Active Window</span>
+            </div>
+            <div class="focus-app">
+              <div class="focus-icon" id="focused-app-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+              </div>
+              <div class="focus-details">
+                <h3 id="focused-app-name">Waiting</h3>
+                <p class="focus-title" id="focused-window-title">No active process detected</p>
+              </div>
+            </div>
+            <div class="focus-footer">
+              <div class="idle-pill">
+                <span class="idle-pill-label">Idle</span>
+                <span class="idle-pill-value" id="idle-value">0s</span>
+              </div>
+              <div class="idle-pill class-pill">
+                <span class="idle-pill-label">Class</span>
+                <span class="idle-pill-value" id="focus-classification">—</span>
+              </div>
+              <div class="idle-pill conf-pill">
+                <span class="idle-pill-label">AI</span>
+                <span class="idle-pill-value" id="focus-confidence">—</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- CLASSIFIER PROMPT CARD -->
+          <div class="glass-card classifier-card dash-span-2" id="classifier-card" style="display: none;">
+            <div class="classifier-header">
+              <span class="card-label" style="color: var(--blue);">Intelligent Classifier</span>
+              <button class="classifier-close" id="classifier-close">&times;</button>
+            </div>
+            <p class="classifier-text">We detected <strong id="classifier-process-name">app</strong>. How should we track it?</p>
+            <div class="classifier-actions">
+              <button class="classify-btn classify-work" id="btn-classify-work">Work</button>
+              <button class="classify-btn classify-gaming" id="btn-classify-gaming">Gaming</button>
+              <button class="classify-btn classify-entertainment" id="btn-classify-entertainment" style="background: var(--bg-hover); border-color: var(--purple); color: var(--purple);">Entertainment</button>
+              <button class="classify-btn classify-ai" id="btn-classify-both">AI Decide</button>
+              <button class="classify-btn classify-ignore" id="btn-classify-ignore">Ignore</button>
+            </div>
+          </div>
+
+          <!-- TIMER CONTROLLER CARD -->
+          <div class="glass-card timer-card dash-span-2">
+            <div class="timer-header">
+              <span class="card-label">Task Timer</span>
+            </div>
+            <div class="timer-selectors">
+              <div class="selector-item">
+                <label class="selector-label">Project</label>
+                <select id="project-selector" class="selector-field">
+                  <option value="">No Project Selected</option>
+                </select>
+              </div>
+              <div class="selector-item">
+                <label class="selector-label">Task</label>
+                <select id="task-selector" class="selector-field" disabled>
+                  <option value="">No Task Selected</option>
+                </select>
+              </div>
+            </div>
+            <div class="timer-bar">
+              <div class="timer-display">
+                <span class="timer-clock" id="timer-clock">00:00:00</span>
+                <span class="timer-status" id="timer-status">Idle</span>
+              </div>
+              <div class="timer-controls">
+                <button id="btn-start" class="btn-timer btn-start" disabled>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                  Start
+                </button>
+                <button id="btn-stop" class="btn-timer btn-pause" style="display: none;">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+                  Pause
+                </button>
+                <button id="btn-complete" class="btn-timer btn-complete" disabled>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  Complete
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- SESSION SUMMARY MINI CARDS -->
+          <div class="glass-card session-card">
+            <div class="session-ring">
+              <svg viewBox="0 0 100 100" class="ring-chart">
+                <circle cx="50" cy="50" r="40" class="ring-bg"/>
+                <circle cx="50" cy="50" r="40" class="ring-segment ring-work" id="session-ring-work"/>
+                <circle cx="50" cy="50" r="40" class="ring-segment ring-gaming" id="session-ring-gaming"/>
+                <circle cx="50" cy="50" r="40" class="ring-segment ring-entertainment" id="session-ring-entertainment"/>
+                <circle cx="50" cy="50" r="40" class="ring-segment ring-idle" id="session-ring-idle"/>
+              </svg>
+              <div class="ring-center">
+                <span class="ring-value" id="session-total">0m</span>
+                <span class="ring-label">Today</span>
+              </div>
+            </div>
+            <div class="session-legend">
+              <div class="legend-row"><span class="legend-dot work"></span><span class="legend-text">Work <strong id="ses-work">0m</strong></span></div>
+              <div class="legend-row"><span class="legend-dot gaming"></span><span class="legend-text">Gaming <strong id="ses-gaming">0m</strong></span></div>
+              <div class="legend-row"><span class="legend-dot entertainment"></span><span class="legend-text">Entertainment <strong id="ses-entertainment">0m</strong></span></div>
+              <div class="legend-row"><span class="legend-dot idle"></span><span class="legend-text">Idle <strong id="ses-idle">0m</strong></span></div>
+            </div>
+          </div>
+
+          <!-- FOCUS GOAL CARD -->
+          <div class="glass-card goal-card">
+            <div class="goal-header">
+              <span class="card-label">Daily Focus Goal</span>
+              <span class="goal-percent" id="goal-percent">0%</span>
+            </div>
+            <div class="goal-bar-track">
+              <div class="goal-bar-fill" id="goal-bar-fill"></div>
+            </div>
+            <div class="goal-footer">
+              <span id="goal-current">0m</span>
+              <span class="goal-target">/ <span id="goal-target">120</span>m</span>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════ -->
+      <!-- TAB: ANALYTICS -->
+      <!-- ═══════════════════════════════════════════ -->
+      <section class="tab-panel" id="tab-analytics">
+        <div class="analytics-wrap">
+
+          <!-- FILTER BAR -->
+          <div class="glass-card filter-bar">
+            <div class="filter-group">
+              <span class="filter-label">Scope</span>
+              <button class="pill-btn active" id="btn-scope-current">Current</button>
+              <button class="pill-btn" id="btn-scope-all">All</button>
+            </div>
+            <div class="filter-group">
+              <span class="filter-label">Period</span>
+              <button class="pill-btn active" data-timeframe="all">All</button>
+              <button class="pill-btn" data-timeframe="month">Month</button>
+              <button class="pill-btn" data-timeframe="week">Week</button>
+              <button class="pill-btn" data-timeframe="day">Day</button>
+            </div>
+          </div>
+
+          <!-- KPI CARDS -->
+          <div class="kpi-row">
+            <div class="glass-card kpi-card">
+              <span class="card-label">Completed</span>
+              <h3 id="stat-completed">0/0</h3>
+              <p class="kpi-sub" id="stat-efficiency">0% delivery rate</p>
+            </div>
+            <div class="glass-card kpi-card">
+              <span class="card-label">Work Duration</span>
+              <h3 id="stat-work-time">0m</h3>
+              <p class="kpi-sub" id="stat-avg-time">~0m avg per task</p>
+            </div>
+            <div class="glass-card kpi-card">
+              <span class="card-label">Idle Time</span>
+              <h3 id="stat-idle-time">0m</h3>
+              <p class="kpi-sub" id="stat-idle-percentage">0% of total</p>
+            </div>
+            <div class="glass-card kpi-card">
+              <span class="card-label">Gaming</span>
+              <h3 id="stat-gaming-time">0m</h3>
+              <p class="kpi-sub" id="stat-gaming-percentage">0% of total</p>
+            </div>
+          </div>
+
+          <!-- WEEKLY CHART -->
+          <div class="glass-card chart-card">
+            <h2 class="card-heading">Weekly Activity</h2>
+            <div class="weekly-chart">
+              <div class="weekly-col">
+                <div class="weekly-bar-wrap">
+                  <div id="bar-mon-work" class="bar-segment bar-work"></div>
+                  <div id="bar-mon-gaming" class="bar-segment bar-gaming"></div>
+                  <div id="bar-mon-entertainment" class="bar-segment bar-entertainment"></div>
+                </div>
+                <span class="weekly-label">M</span>
+              </div>
+              <div class="weekly-col">
+                <div class="weekly-bar-wrap">
+                  <div id="bar-tue-work" class="bar-segment bar-work"></div>
+                  <div id="bar-tue-gaming" class="bar-segment bar-gaming"></div>
+                  <div id="bar-tue-entertainment" class="bar-segment bar-entertainment"></div>
+                </div>
+                <span class="weekly-label">T</span>
+              </div>
+              <div class="weekly-col">
+                <div class="weekly-bar-wrap">
+                  <div id="bar-wed-work" class="bar-segment bar-work"></div>
+                  <div id="bar-wed-gaming" class="bar-segment bar-gaming"></div>
+                  <div id="bar-wed-entertainment" class="bar-segment bar-entertainment"></div>
+                </div>
+                <span class="weekly-label">W</span>
+              </div>
+              <div class="weekly-col">
+                <div class="weekly-bar-wrap">
+                  <div id="bar-thu-work" class="bar-segment bar-work"></div>
+                  <div id="bar-thu-gaming" class="bar-segment bar-gaming"></div>
+                  <div id="bar-thu-entertainment" class="bar-segment bar-entertainment"></div>
+                </div>
+                <span class="weekly-label">T</span>
+              </div>
+              <div class="weekly-col">
+                <div class="weekly-bar-wrap">
+                  <div id="bar-fri-work" class="bar-segment bar-work"></div>
+                  <div id="bar-fri-gaming" class="bar-segment bar-gaming"></div>
+                  <div id="bar-fri-entertainment" class="bar-segment bar-entertainment"></div>
+                </div>
+                <span class="weekly-label">F</span>
+              </div>
+              <div class="weekly-col">
+                <div class="weekly-bar-wrap">
+                  <div id="bar-sat-work" class="bar-segment bar-work"></div>
+                  <div id="bar-sat-gaming" class="bar-segment bar-gaming"></div>
+                  <div id="bar-sat-entertainment" class="bar-segment bar-entertainment"></div>
+                </div>
+                <span class="weekly-label">S</span>
+              </div>
+              <div class="weekly-col">
+                <div class="weekly-bar-wrap">
+                  <div id="bar-sun-work" class="bar-segment bar-work"></div>
+                  <div id="bar-sun-gaming" class="bar-segment bar-gaming"></div>
+                  <div id="bar-sun-entertainment" class="bar-segment bar-entertainment"></div>
+                </div>
+                <span class="weekly-label">S</span>
+              </div>
+            </div>
+            <div class="weekly-legend">
+              <span class="weekly-legend-item"><span class="dot work"></span>Work</span>
+              <span class="weekly-legend-item"><span class="dot gaming"></span>Gaming</span>
+              <span class="weekly-legend-item"><span class="dot entertainment" style="background: var(--purple);"></span>Entertainment</span>
+            </div>
+          </div>
+
+          <!-- DONUT CHART -->
+          <div class="glass-card chart-card">
+            <h2 class="card-heading">Time Distribution</h2>
+            <div class="donut-flex">
+              <div class="donut-container">
+                <svg viewBox="0 0 100 100" class="donut-svg">
+                  <circle cx="50" cy="50" r="40" class="donut-bg"/>
+                  <circle cx="50" cy="50" r="40" class="donut-seg" id="donut-segment-working" stroke="#30D158"/>
+                  <circle cx="50" cy="50" r="40" class="donut-seg" id="donut-segment-gaming" stroke="#FF375F"/>
+                  <circle cx="50" cy="50" r="40" class="donut-seg" id="donut-segment-entertainment" stroke="#BF5AF2"/>
+                  <circle cx="50" cy="50" r="40" class="donut-seg" id="donut-segment-idle" stroke="#FFD60A"/>
+                </svg>
+                <div class="donut-center">
+                  <span class="donut-value" id="chart-center-value">0m</span>
+                  <span class="donut-label">Total</span>
+                </div>
+              </div>
+              <div class="donut-legend">
+                <div class="legend-row"><span class="legend-dot work"></span><span class="legend-text">Working <strong id="legend-work-val">0m</strong></span></div>
+                <div class="legend-row"><span class="legend-dot gaming"></span><span class="legend-text">Gaming <strong id="legend-game-val">0m</strong></span></div>
+                <div class="legend-row"><span class="legend-dot entertainment"></span><span class="legend-text">Entertainment <strong id="legend-ent-val">0m</strong></span></div>
+                <div class="legend-row"><span class="legend-dot idle"></span><span class="legend-text">Idle <strong id="legend-idle-val">0m</strong></span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TASKS TABLE -->
+          <div class="glass-card">
+            <h2 class="card-heading">Task Breakdown</h2>
+            <div class="table-scroll">
+              <table class="data-table">
+                <thead>
+                  <tr><th>Task</th><th>Status</th><th>Work</th><th>Gaming</th><th>Entertainment</th><th>Idle</th></tr>
+                </thead>
+                <tbody id="analytics-table-body">
+                  <tr><td colspan="6" class="table-empty">No tasks match the filter.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- PROCESS BREAKDOWN -->
+          <div class="glass-card">
+            <h2 class="card-heading">Focus Categories</h2>
+            <div class="process-bars" id="process-bars-container">
+              <p class="table-empty">No focus data recorded yet.</p>
+            </div>
+          </div>
+
+          <!-- APP DURATIONS -->
+          <div class="glass-card">
+            <h2 class="card-heading">Application Screen Time</h2>
+            <div class="table-scroll">
+              <table class="data-table">
+                <thead>
+                  <tr><th>Application</th><th>Classification</th><th>Duration</th></tr>
+                </thead>
+                <tbody id="app-durations-table-body">
+                  <tr><td colspan="3" class="table-empty">No app data yet.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════ -->
+      <!-- TAB: SETTINGS -->
+      <!-- ═══════════════════════════════════════════ -->
+      <section class="tab-panel" id="tab-settings">
+        <div class="settings-wrap">
+
+          <div class="glass-card">
+            <h2 class="card-heading">Tracking Preferences</h2>
+            <form id="settings-form" class="settings-form">
+
+              <div class="toggle-section">
+                <div class="toggle-row">
+                  <div class="toggle-text">
+                    <span class="toggle-title">Auto-Tracking</span>
+                    <span class="toggle-desc">Start timer automatically on creative apps</span>
+                  </div>
+                  <label class="toggle-switch"><input type="checkbox" id="auto-tracking-enabled"><span class="toggle-track"></span></label>
+                </div>
+                <div class="toggle-row">
+                  <div class="toggle-text">
+                    <span class="toggle-title">Gaming Tracking</span>
+                    <span class="toggle-desc">Log gaming sessions separately</span>
+                  </div>
+                  <label class="toggle-switch"><input type="checkbox" id="gaming-tracking-enabled"><span class="toggle-track"></span></label>
+                </div>
+                <div class="toggle-row">
+                  <div class="toggle-text">
+                    <span class="toggle-title">Notifications</span>
+                    <span class="toggle-desc">System notifications for state changes</span>
+                  </div>
+                  <label class="toggle-switch"><input type="checkbox" id="notifications-enabled"><span class="toggle-track"></span></label>
+                </div>
+                <div class="toggle-row">
+                  <div class="toggle-text">
+                    <span class="toggle-title">Break Reminders</span>
+                    <span class="toggle-desc">Suggest breaks after long focus sessions</span>
+                  </div>
+                  <label class="toggle-switch"><input type="checkbox" id="break-reminders-enabled"><span class="toggle-track"></span></label>
+                </div>
+                <div class="toggle-row">
+                  <div class="toggle-text">
+                    <span class="toggle-title">Auto-Start on Boot</span>
+                    <span class="toggle-desc">Launch when Windows starts</span>
+                  </div>
+                  <label class="toggle-switch"><input type="checkbox" id="auto-start-on-boot"><span class="toggle-track"></span></label>
+                </div>
+                <div class="toggle-row">
+                  <div class="toggle-text">
+                    <span class="toggle-title">Start Minimized</span>
+                    <span class="toggle-desc">Launch hidden in system tray</span>
+                  </div>
+                  <label class="toggle-switch"><input type="checkbox" id="start-minimized"><span class="toggle-track"></span></label>
+                </div>
+              </div>
+
+              <div class="field-group">
+                <label class="field-label">Work Keywords</label>
+                <p class="field-hint">Browser tabs containing these count as work</p>
+                <textarea id="work-keywords" class="field-textarea" rows="3" placeholder="envato, behance, github..."></textarea>
+              </div>
+
+              <div class="field-group">
+                <label class="field-label">Gaming Keywords</label>
+                <p class="field-hint">Process names that indicate gaming</p>
+                <textarea id="game-keywords" class="field-textarea" rows="3" placeholder="steam, valorant, minecraft..."></textarea>
+              </div>
+
+              <div class="field-group">
+                <label class="field-label">Idle Threshold</label>
+                <p class="field-hint">Seconds before switching to idle state</p>
+                <div class="slider-row">
+                  <input type="range" id="idle-time" class="field-slider" min="30" max="600" step="30" value="120">
+                  <span class="slider-val" id="idle-time-val">120s</span>
+                </div>
+              </div>
+
+              <div class="field-group">
+                <label class="field-label">Daily Focus Goal</label>
+                <p class="field-hint">Target minutes of focused work per day</p>
+                <div class="slider-row">
+                  <input type="range" id="focus-goal" class="field-slider" min="30" max="480" step="15" value="120">
+                  <span class="slider-val" id="focus-goal-val">120m</span>
+                </div>
+              </div>
+
+              <button type="submit" class="btn-save">Save Configuration</button>
+            </form>
+          </div>
+
+          <!-- APP RULES MANAGER -->
+          <div class="glass-card">
+            <h2 class="card-heading">Application Rules</h2>
+            <p class="card-desc">Override automatic classification for specific apps.</p>
+            <div class="rule-add-row">
+              <input type="text" id="custom-app-name" class="field-input" placeholder="Process name (e.g. discord)">
+              <select id="custom-app-type" class="selector-field">
+                <option value="work">Work</option>
+                <option value="gaming">Gaming</option>
+                <option value="entertainment">Entertainment</option>
+                <option value="ai">AI Decide</option>
+                <option value="ignore">Ignore</option>
+              </select>
+              <button id="btn-add-custom-rule" class="btn-add-rule">Add</button>
+            </div>
+            <div class="table-scroll">
+              <table class="data-table">
+                <thead>
+                  <tr><th>Application</th><th>Classification</th><th style="width:60px"></th></tr>
+                </thead>
+                <tbody id="app-rules-table-body"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- MODEL SYNC CARD -->
+          <div class="glass-card">
+            <h2 class="card-heading">AI Network Synchronization</h2>
+            <p class="card-desc">Automatically download the latest pre-trained AI weights and securely contribute local process learnings to the community database.</p>
+            <div class="toggle-section" style="margin-bottom:16px;">
+              <div class="toggle-row">
+                <div class="toggle-text">
+                  <span class="toggle-title">Cloud Model Sharing</span>
+                  <span class="toggle-desc">Securely contribute classification learning profiles to the cloud</span>
+                </div>
+                <label class="toggle-switch"><input type="checkbox" id="model-sharing-enabled"><span class="toggle-track"></span></label>
+              </div>
+              <div class="toggle-row" style="margin-top:12px;">
+                <div class="toggle-text">
+                  <span class="toggle-title">Online Search Lookup</span>
+                  <span class="toggle-desc">Automatically search Wikipedia to classify unrecognized apps</span>
+                </div>
+                <label class="toggle-switch"><input type="checkbox" id="online-search-enabled"><span class="toggle-track"></span></label>
+              </div>
+            </div>
+            <div class="field-group">
+              <label class="field-label">GitHub Access Token</label>
+              <p class="field-hint">Required only if you want to push contributions to the shared community database</p>
+              <input type="password" id="github-token" class="field-input" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px;">
+              <span id="model-sync-status-text" class="field-hint" style="margin:0; font-weight:600; color:var(--text-3);">Sync status: Offline</span>
+              <button id="btn-sync-now" type="button" class="btn-ghost" style="padding:6px 12px; font-size:0.75rem;">Sync Now</button>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════ -->
+      <!-- TAB: ACTIVITY LOGS -->
+      <!-- ═══════════════════════════════════════════ -->
+      <section class="tab-panel" id="tab-logs">
+        <div class="logs-wrap">
+          <div class="glass-card logs-card">
+            <div class="logs-toolbar">
+              <h2 class="card-heading">Activity Logs</h2>
+              <button class="btn-ghost" id="clear-logs-btn">Clear</button>
+            </div>
+            <div class="logs-list" id="logs-container">
+              <div class="log-entry empty">No records yet. Monitoring system activity...</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="renderer.js"></script>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- IN-APP TOAST NOTIFICATION CONTAINER -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="toast-container" id="toast-container"></div>
+
+</body>
+</html>

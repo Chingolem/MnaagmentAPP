@@ -1,0 +1,48 @@
+{
+  "name": "timeroi-desktop-companion",
+  "version": "1.0.0",
+  "description": "Windows Desktop Companion Agent for TIMEROI",
+  "main": "main.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.8",
+    "ws": "^8.16.0"
+  },
+  "devDependencies": {
+    "electron": "^29.1.0",
+    "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "appId": "com.timeroi.desktop",
+    "productName": "TIMEROI",
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "icon": "icon.png"
+    },
+    "nsis": {
+      "oneClick": true,
+      "allowToChangeInstallationDirectory": false,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "TIMEROI"
+    },
+    "files": [
+      "main.js",
+      "renderer.js",
+      "index.html",
+      "index.css",
+      "overlay.html",
+      "micronet-v3.js",
+      "model-sync.js",
+      "win-tracker.ps1",
+      "icon.png",
+      "package.json"
+    ]
+  }
+}
