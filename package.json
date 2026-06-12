@@ -1,6 +1,6 @@
 {
   "name": "timeroi-desktop-companion",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Windows Desktop Companion Agent for TIMEROI",
   "main": "main.js",
   "type": "commonjs",
