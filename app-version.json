@@ -1,6 +1,6 @@
 {
-  "version": "1.0.1",
-  "downloadUrl": "https://github.com/Chingolem/MnaagmentAPP/releases/download/v1.0.1/TIMEROI.Setup.1.0.1.exe",
-  "url": "https://github.com/Chingolem/MnaagmentAPP/releases/tag/v1.0.1",
-  "notes": "Added Offline-capable project/task creation, local caching, and robust executable name cleaning for AI search (e.g. Roblox classification)."
+  "version": "1.0.2",
+  "downloadUrl": "https://github.com/Chingolem/MnaagmentAPP/releases/download/v1.0.2/TIMEROI.Setup.1.0.2.exe",
+  "url": "https://github.com/Chingolem/MnaagmentAPP/releases/tag/v1.0.2",
+  "notes": "Added full exit capability upon window close, terminating all tabs and background processes, along with offline task creation."
 }

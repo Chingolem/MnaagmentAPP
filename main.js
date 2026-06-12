@@ -1345,12 +1345,13 @@ function createWindow() {
   mainWindow.loadFile('index.html');
 
   mainWindow.on('close', (event) => {
-    if (!app.isQuitting) {
-      event.preventDefault();
-      mainWindow.hide();
-      addLog('Minimized to system tray instead of closing', 'system');
+    app.isQuitting = true;
+    if (psProcess) {
+      try {
+        psProcess.kill();
+      } catch (e) {}
     }
-    return false;
+    app.quit();
   });
 }
 
@@ -1621,10 +1622,15 @@ app.on('will-quit', () => {
   saveAppDurations();
   saveDailyStats();
   MicroAI.save();
+  if (psProcess) {
+    try {
+      psProcess.kill();
+    } catch (e) {}
+  }
 });
 
 app.on('window-all-closed', () => {
-  // Run in tray
+  app.quit();
 });
 
 // ═══════════════════════════════════════════════════════════
